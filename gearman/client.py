@@ -40,6 +40,10 @@ class ClientAgent(common.BaseAgent):
             return Task(self)
 
 class Client(object):
+    level_normal = ClientAgent.level_normal
+    level_low = ClientAgent.level_low
+    level_high = ClientAgent.level_high
+
     def __init__(self):
         self._agents = []
 
