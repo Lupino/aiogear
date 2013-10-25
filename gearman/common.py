@@ -216,6 +216,7 @@ class BaseAgent(object):
         self._writer = writer
         self._buffer = []
         self._extra = extra
+        self._lock = asyncio.Lock()
 
     @asyncio.coroutine
     def send(self, cmd_type, cmd_args={}, is_response = False):
@@ -228,6 +229,7 @@ class BaseAgent(object):
 
     @asyncio.coroutine
     def read(self, is_response = True):
+        yield from self._lock
         buf = b''.join(self._buffer)
         buf += yield from self._reader.read(1024)
         while True:
@@ -242,4 +244,5 @@ class BaseAgent(object):
             logger.debug('Recv[%s:%s]> CMD: %s | Buffer: %s'%(\
                     self._extra['host'], self._extra['port'],
                     COMMAND_NAMES.get(data[0]), buf[:data[2]]))
+        self._lock.release()
         return data[0], data[1]
