@@ -163,7 +163,8 @@ def pack_binary_command(cmd_type, cmd_args={}, is_response=False):
     payload_size = len(binary_payload)
     packing_format = '!4sII%ds' % payload_size
 
-    return struct.pack(packing_format, magic, cmd_type, payload_size, binary_payload)
+    return struct.pack(packing_format, magic, cmd_type, payload_size,
+            binary_payload)
 
 def parse_binary_command(in_buffer, is_response=True):
     in_buffer_size = len(in_buffer)
@@ -176,7 +177,8 @@ def parse_binary_command(in_buffer, is_response=True):
     if in_buffer_size < COMMAND_HEADER_SIZE:
         return cmd_type, cmd_args, cmd_len
 
-    magic, cmd_type, cmd_len = struct.unpack('!4sII', in_buffer[:COMMAND_HEADER_SIZE])
+    magic, cmd_type, cmd_len = struct.unpack('!4sII',
+            in_buffer[:COMMAND_HEADER_SIZE])
 
     received_bad_response = is_response and bool(magic != MAGIC_RES)
     received_bad_request = not is_response and bool(magic != MAGIC_REQ)
@@ -195,7 +197,8 @@ def parse_binary_command(in_buffer, is_response=True):
     split_arguments = []
 
     if len(excepted_cmd_params) > 0:
-        split_arguments = binary_payload.split(NULL_CHAR, len(excepted_cmd_params) - 1)
+        split_arguments = binary_payload.split(NULL_CHAR,
+                len(excepted_cmd_params) - 1)
     elif binary_payload:
         raise ProtocolError('Excepted no binary payload: %s' % cmd_type)
 
