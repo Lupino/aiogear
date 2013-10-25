@@ -17,12 +17,10 @@ class WorkerAgent(common.BaseAgent):
 
     @asyncio.coroutine
     def work(self):
-        self.is_running = True
         yield from self.send(common.GRAB_JOB)
         cmd_type, cmd_args = yield from self.read()
         if cmd_type == common.NO_JOB:
-            yield from self.send(common.PRE_SLEEP)
-            yield from self.read()
+            yield from self.sleep()
         elif cmd_type == common.JOB_ASSIGN:
             func_name = common.to_str(cmd_args['func_name'])
             if self._worker.has_func(func_name):
@@ -34,8 +32,9 @@ class WorkerAgent(common.BaseAgent):
     def set_client_id(self, client_id):
         yield from self.send(common.SET_CLIENT_ID, {'client_id': client_id})
 
-    def finish(self):
-        self.is_running = False
+    def sleep(self):
+        yield from self.send(common.PRE_SLEEP)
+        return (yield from self.read())
 
 class Job(object):
     def __init__(self, agent, cmd_args):
@@ -92,11 +91,13 @@ class Worker(object):
 
     def work(self, max_tasks = 5):
         for agent in self._agents:
-            if agent.is_runing:
-                continue
-            task = asyncio.Task(agent.work())
-            task.add_done_callback(lambda t: agent.finish())
-            task.add_done_callback(lambda t: self.work())
+            def start(t=None, agent=None):
+                if t:
+                    agent = t.agent
+                task = asyncio.Task(agent.work())
+                task.agent = agent
+                task.add_done_callback(start)
+            start(agent=agent)
 
     @asyncio.coroutine
     def add_func(self, func_name, callback, timeout=0):
@@ -115,9 +116,16 @@ class Worker(object):
         func = self._funcs[func_name]
         task = asyncio.Task(func(job))
         task.add_done_callback(lambda t: self._sem.release())
+        return task
 
     @asyncio.coroutine
     def add_server(self, host, port, ssl = False):
         reader, writer = yield from asyncio.open_connection(host, port, ssl=ssl)
-        agent = WorkerAgent(self, reader, writer)
+        agent = WorkerAgent(self, reader, writer,
+                {'host': host, 'port': port, 'ssl': ssl})
         self._agents.append(agent)
+
+    @asyncio.coroutine
+    def set_client_id(self, client_id):
+        for agent in self._agents:
+            yield from agent.set_client_id(client_id)
