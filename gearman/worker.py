@@ -94,6 +94,10 @@ class Worker(object):
             def start(t=None, agent=None):
                 if t:
                     agent = t.agent
+                    exception = t.exception()
+                    if isinstance(exception, ConnectionResetError):
+                        self._agents.remove(agent)
+                        return
                 task = asyncio.Task(agent.work())
                 task.agent = agent
                 task.add_done_callback(start)

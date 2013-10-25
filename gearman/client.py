@@ -50,7 +50,14 @@ class Client(object):
     @asyncio.coroutine
     def do(self, func_name, workload, unique = None, level = 'normal', background=False):
         agent = random.choice(self._agents)
-        return agent.do(func_name, workload, unique, level, background)
+        try:
+            ret = yield from agent.do(func_name, workload, unique, level,
+                    background)
+        except ConnectionResetError as e:
+            self._agents.remove(self._agents)
+            raise e
+
+        return ret
 
     @asyncio.coroutine
     def add_server(self, host, port, ssl = False):
