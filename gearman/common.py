@@ -1,5 +1,8 @@
 import struct
 import asyncio
+import logging
+
+logger = logging.getLogger('gearman')
 
 CAN_DO             = 1    # REQ    Worker
 CANT_DO            = 2    # REQ    Worker
@@ -205,15 +208,19 @@ def parse_binary_command(in_buffer, is_response=True):
     return cmd_type, cmd_args, excepted_packet_size
 
 class BaseAgent(object):
-    def __init__(self, reader, writer):
+    def __init__(self, reader, writer, extra = {}):
         self._reader = reader
         self._writer = writer
         self._buffer = []
+        self._extra = extra
 
     @asyncio.coroutine
     def send(self, cmd_type, cmd_args={}, is_response = False):
         buf = pack_binary_command(cmd_type, cmd_args, is_response)
         self._writer.write(buf)
+        logger.debug('Send[%s:%s]> CMD: %s | Buffer: %s'%(\
+                self._extra['host'], self._extra['port'],
+                COMMAND_NAMES.get(cmd_type), buf))
         yield from self._writer.drain()
 
     @asyncio.coroutine
@@ -228,4 +235,8 @@ class BaseAgent(object):
                 break
 
         self._buffer = [buf[data[2]:]]
+        if data[0]:
+            logger.debug('Recv[%s:%s]> CMD: %s | Buffer: %s'%(\
+                    self._extra['host'], self._extra['port'],
+                    COMMAND_NAMES.get(data[0]), buf[:data[2]]))
         return data[0], data[1]

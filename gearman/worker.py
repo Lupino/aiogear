@@ -3,10 +3,9 @@ from . import common
 
 class WorkerAgent(common.BaseAgent):
 
-    def __init__(self, worker, reader, writer):
-        common.BaseAgent.__init__(self, reader, writer)
+    def __init__(self, worker, reader, writer, extra = {}):
+        common.BaseAgent.__init__(self, reader, writer, extra)
         self._worker = worker
-        self.is_running = False
 
     @asyncio.coroutine
     def add_func(self, func_name, timeout = 0):
