@@ -231,11 +231,10 @@ class BaseAgent(object):
     def read(self, is_response = True):
         yield from self._lock
         buf = b''.join(self._buffer)
-        buf += yield from self._reader.read(1024)
         while True:
             data = parse_binary_command(buf, is_response)
             if data[2] == 0:
-                buf += yield from self._reader.read(1024)
+                buf += yield from self._reader.read(12)
             else:
                 break
 
