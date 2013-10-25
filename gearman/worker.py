@@ -89,7 +89,7 @@ class Worker(object):
         self._funcs = {}
         self._sem = asyncio.Semaphore(max_tasks)
 
-    def work(self, max_tasks = 5):
+    def work(self):
         for agent in self._agents:
             def start(t=None, agent=None):
                 if t:
