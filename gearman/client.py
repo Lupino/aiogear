@@ -1,6 +1,7 @@
 import asyncio
 from . import common
 import random
+from uuid import uuid1 as uuid
 
 class ClientAgent(common.BaseAgent):
     level_normal = 'normal'
@@ -9,6 +10,8 @@ class ClientAgent(common.BaseAgent):
 
     @asyncio.coroutine
     def do(self, func_name, workload, unique = None, level = 'normal', background=False):
+        if not unique:
+            unique = str(uuid())
         payload = {
             'func_name': func_name,
             'unique': unique,
