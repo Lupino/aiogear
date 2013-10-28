@@ -40,7 +40,7 @@ class ClientAgent(common.BaseAgent):
         if background:
             return job_handle
         else:
-            return Task(self)
+            return Task(self, job_handle)
 
 class Client(object):
     level_normal = ClientAgent.level_normal
@@ -71,9 +71,9 @@ class Client(object):
 
 
 class Task(object):
-    def __init__(self, agent):
+    def __init__(self, agent, job_handle):
         self._agent = agent
-
+        self.job_handle = job_handle
     @property
     def result(self):
         cmd_type, cmd_args = yield from self._agent.read()
