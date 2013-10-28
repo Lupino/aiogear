@@ -140,6 +140,12 @@ COMMAND_HEADER_SIZE = 12
 class ProtocolError(Exception):
     pass
 
+class GearmanError(Exception):
+    def __init__(self, error_code, error_text, extra):
+        self.error_code = error_code
+        self.error_text = error_text
+        self.extra = extra
+
 def to_bytes(string):
     if isinstance(string, str):
         return bytes(string, 'UTF8')
@@ -244,4 +250,6 @@ class BaseAgent(object):
                     self._extra['host'], self._extra['port'],
                     COMMAND_NAMES.get(data[0]), buf[:data[2]]))
         self._lock.release()
+        if data[0] == ERROR:
+            raise GearmanError(data[1]['error_code'], data[1]['error_text'], self._extra)
         return data[0], data[1]
