@@ -2,11 +2,11 @@ import logging
 import sys
 import os
 try:
-    from gearman import Worker
+    from asyncgear import Worker
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-    from gearman import Worker
-from gearman.common import logger
+    from asyncgear import Worker
+from asyncgear.common import logger
 
 import asyncio
 logger.setLevel(logging.DEBUG)

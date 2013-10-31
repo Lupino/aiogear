@@ -8,9 +8,9 @@ install_requires = ['asyncio']
 def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
 
-setup(name='gearman',
+setup(name='asyncgear',
       version=version,
-      description=('gearman client/worker'),
+      description=('gearman client/worker for asyncio'),
       long_description=read('README.md'),
       classifiers=[
           'License :: OSI Approved :: BSD License',

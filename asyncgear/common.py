@@ -2,7 +2,7 @@ import struct
 import asyncio
 import logging
 
-logger = logging.getLogger('gearman')
+logger = logging.getLogger('asyncgear')
 
 CAN_DO             = 1    # REQ    Worker
 CANT_DO            = 2    # REQ    Worker
