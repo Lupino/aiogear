@@ -8,7 +8,7 @@ install_requires = ['asyncio']
 def read(f):
     return open(os.path.join(os.path.dirname(__file__), f)).read().strip()
 
-setup(name='asyncgear',
+setup(name='aiogear',
       version=version,
       description=('gearman client/worker for asyncio'),
       long_description=read('README.md'),

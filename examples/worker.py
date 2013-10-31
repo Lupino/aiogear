@@ -2,11 +2,11 @@ import logging
 import sys
 import os
 try:
-    from asyncgear import Worker
+    from aiogear import Worker
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-    from asyncgear import Worker
-from asyncgear.common import logger
+    from aiogear import Worker
+from aiogear.common import logger
 
 import asyncio
 logger.setLevel(logging.DEBUG)

@@ -2,11 +2,11 @@ import logging
 import sys
 import os
 try:
-    from asyncgear import Client
+    from aiogear import Client
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-    from asyncgear import Client
-from asyncgear.common import logger
+    from aiogear import Client
+from aiogear.common import logger
 
 import asyncio
 logger.setLevel(logging.DEBUG)
