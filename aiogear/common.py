@@ -2,7 +2,7 @@ import struct
 import asyncio
 import logging
 
-__all__ = ['BaseAgent']
+__all__ = ['BaseAgent', 'to_bytes', 'to_str', 'GearmanError', 'ProtocolError']
 
 logger = logging.getLogger('aiogear')
 
