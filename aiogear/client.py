@@ -3,6 +3,8 @@ from . import common
 import random
 from uuid import uuid1 as uuid
 
+__all__ = ['Client']
+
 class ClientAgent(common.BaseAgent):
     level_normal = 'normal'
     level_low = 'low'
@@ -47,6 +49,8 @@ class Client(object):
     level_low = ClientAgent.level_low
     level_high = ClientAgent.level_high
 
+    __slots__ = ['_agents']
+
     def __init__(self):
         self._agents = []
 
@@ -71,6 +75,7 @@ class Client(object):
 
 
 class Task(object):
+    __slots__ = ['_agent', 'job_handle']
     def __init__(self, agent, job_handle):
         self._agent = agent
         self.job_handle = job_handle

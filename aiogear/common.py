@@ -2,6 +2,8 @@ import struct
 import asyncio
 import logging
 
+__all__ = ['BaseAgent']
+
 logger = logging.getLogger('aiogear')
 
 CAN_DO             = 1    # REQ    Worker
@@ -217,6 +219,7 @@ def parse_binary_command(in_buffer, is_response=True):
     return cmd_type, cmd_args, excepted_packet_size
 
 class BaseAgent(object):
+    __slots__ = ['_reader', '_writer', '_buffer', '_extra', '_lock']
     def __init__(self, reader, writer, extra = {}):
         self._reader = reader
         self._writer = writer

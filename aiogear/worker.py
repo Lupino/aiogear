@@ -1,8 +1,10 @@
 import asyncio
 from . import common
 
-class WorkerAgent(common.BaseAgent):
+__all__ = ['Worker']
 
+class WorkerAgent(common.BaseAgent):
+    __slots__ = ['_worker']
     def __init__(self, worker, reader, writer, extra = {}):
         common.BaseAgent.__init__(self, reader, writer, extra)
         self._worker = worker
@@ -84,6 +86,7 @@ class Job(object):
         yield from self.send(common.WORK_EXCEPTION, data)
 
 class Worker(object):
+    __slots__ = ['_agents', '_funcs', '_sem']
     def __init__(self, max_tasks=5):
         self._agents = []
         self._funcs = {}
